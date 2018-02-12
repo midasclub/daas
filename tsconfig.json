@@ -1,0 +1,18 @@
+{
+	"files": [
+		"src/worker/index.ts",
+		"src/index.ts"
+	],
+	"compilerOptions": {
+		"strict": true,
+		"skipLibCheck": true,
+		"noUnusedLocals": true,
+		"target": "es5",
+		"lib": [
+			"ES2015",
+			"DOM"
+		],
+		"outDir": "build",
+		"inlineSourceMap": true
+	}
+}

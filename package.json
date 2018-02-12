@@ -1,0 +1,50 @@
+{
+	"name": "@daas/daas",
+	"version": "0.0.1",
+	"description": "A microservice that creates and manages Dota lobbies",
+	"main": "src/index.ts",
+	"scripts": {
+		"start": "node -r source-map-support/register build/index.js",
+		"worker": "node -r source-map-support/register build/worker/index.js",
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"migrations:up": "node -r dotenv/config ./node_modules/.bin/daas-migrate",
+		"build": "tsc",
+		"core": "node -r source-map-support/register ./node_modules/@iepaas/core/build/src/index.js",
+		"reformat": "prettier --write \"**/*.ts\""
+	},
+	"keywords": [
+		"daas",
+		"dota",
+		"bot",
+		"bots",
+		"lobby"
+	],
+	"author": "Pablo Rodríguez <pabloviolin8@gmail.com>",
+	"license": "MIT",
+	"dependencies": {
+		"@daas/communications": "0.0.1-dev.5",
+		"@daas/db-adapter": "0.0.1-dev.4",
+		"@daas/model": "0.0.1-dev.1",
+		"@iepaas/js-client": "0.0.1-dev.4",
+		"body-parser": "^1.18.2",
+		"chalk": "^2.3.0",
+		"common-tags": "^1.5.1",
+		"dotenv": "^4.0.0",
+		"express": "^4.16.2",
+		"express-validator": "^4.3.0",
+		"source-map-support": "^0.5.0",
+		"steam": "^1.4.0",
+		"ts-node": "^4.0.2"
+	},
+	"devDependencies": {
+		"@types/body-parser": "^1.16.8",
+		"@types/common-tags": "^1.4.0",
+		"@types/dotenv": "^4.0.2",
+		"@types/express": "^4.0.39",
+		"@types/source-map-support": "^0.4.0",
+		"nyc": "^11.3.0",
+		"prettier": "^1.9.2",
+		"typescript": "^2.6.2"
+	},
+	"private": true
+}

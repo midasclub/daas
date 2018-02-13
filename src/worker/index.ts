@@ -1,5 +1,12 @@
+import * as dotenv from "dotenv"
+
+dotenv.config()
+
 import { Entity } from "@daas/model"
-import { Config, Lobbies, Machines, PubSub } from "@daas/db-adapter"
+import {
+	getConfigAdapter, getLobbiesAdapter, getMachinesAdapter,
+	PubSub
+} from "@daas/db-adapter"
 import { launchMachine } from "./launchMachine"
 import { killMachine } from "./killMachine"
 import { sendLobbyToMachine } from "./sendLobbyToMachine"
@@ -16,8 +23,8 @@ async function maintainActiveMachines() {
 	console.log(`Beginning maintainActiveMachines()`)
 
 	const [{ alwaysActiveMachines }, idleMachines] = await Promise.all([
-		Config.get(),
-		Machines.findAllIdle()
+		getConfigAdapter().then(it => it.get()),
+		getMachinesAdapter().then(it => it.findAllIdle())
 	])
 
 	const difference = idleMachines.length - alwaysActiveMachines
@@ -49,7 +56,7 @@ async function maintainActiveMachines() {
 async function replaceOldMachines() {
 	console.log(`Beginning replaceOldMachines()`)
 
-	const idleMachines = await Machines.findAllIdle()
+	const idleMachines = await getMachinesAdapter().then(it => it.findAllIdle())
 
 	await Promise.all(
 		idleMachines.map(async machine => {
@@ -75,8 +82,8 @@ async function handleLobbiesChanged() {
 	console.log(`Beginning handleLobbiesChanged()`)
 
 	const [lobbiesWithoutMachine, idleMachines] = await Promise.all([
-		Lobbies.findAllWithoutMachine(),
-		Machines.findAllIdle()
+		getLobbiesAdapter().then(it => it.findAllWithoutMachine()),
+		getMachinesAdapter().then(it => it.findAllIdle())
 			// Sort by the oldest machines, which are mor likely to be up and running
 			.then(m =>
 				m.sort((a, b) => a.startedAt.getTime() - b.startedAt.getTime())

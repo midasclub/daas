@@ -42,5 +42,7 @@ export const createLobbyValidations = [
 				throw new Error(`Player ${player.steamId} appears more than once.`)
 			}
 		})
+
+		return true
 	})
 ]

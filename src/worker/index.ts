@@ -11,6 +11,7 @@ import { launchMachine } from "./launchMachine"
 import { killMachine } from "./killMachine"
 import { sendLobbyToMachine } from "./sendLobbyToMachine"
 import { setNonOverlappingInterval } from "./setNonOverlappingInterval"
+import { wait } from "../api/support/wait"
 
 const loggableList = (elements: Array<Entity>) =>
 	elements.length === 0
@@ -67,9 +68,8 @@ async function replaceOldMachines() {
 			) {
 				// If a machine is too old, spawn a new one to take its place
 				// maintainActiveMachines() will take care of killing the
-				console.log(
-					`The machine ${machine} has been idle for too long. Launching its replacement...`
-				)
+				console.log(`The machine #${machine.id
+				} has been idle for too long. Launching its replacement...`)
 				await launchMachine()
 			}
 		})
@@ -120,6 +120,7 @@ async function handleLobbiesChanged() {
 export async function main() {
 	setNonOverlappingInterval(async () => {
 		await maintainActiveMachines()
+		await wait(5000)
 		await replaceOldMachines()
 	}, 60000 /* TODO make this customizable */)
 	await PubSub.listen("database_changes", () =>

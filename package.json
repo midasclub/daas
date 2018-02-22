@@ -24,7 +24,7 @@
 	"dependencies": {
 		"@daas/communications": "0.0.1-dev.5",
 		"@daas/core": "0.0.1-dev.1",
-		"@daas/db-adapter": "0.0.1-dev.4",
+		"@daas/db-adapter": "0.0.1-dev.5",
 		"@daas/model": "0.0.1-dev.1",
 		"@iepaas/js-client": "0.0.1-dev.6",
 		"body-parser": "^1.18.2",

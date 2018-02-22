@@ -24,7 +24,7 @@ export async function launchMachine(): Promise<Machine | null> {
 	await getIepaas().Jobs.create(`npm run core ${machine.id}`)
 	const comms = await Communications.open(machine.id + "")
 
-	await comms.waitForMessage(MessageType.BOOT_OK, 20000)
+	await comms.waitForMessage(MessageType.BOOT_OK, 60000)
 	console.log(`BOOT_OK received`)
 
 	sendManyTimes(comms, MessageType.DOTA_BOT_INFO, { botId: randomBot.id })

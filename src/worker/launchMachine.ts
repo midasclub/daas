@@ -16,6 +16,7 @@ export async function launchMachine(): Promise<Machine | null> {
 		return null
 	}
 
+	// TODO take disabled until into account
 	const randomBot = bots[Math.floor(Math.random() * bots.length)]
 	const machine = await Machines.insert({ bot: randomBot })
 

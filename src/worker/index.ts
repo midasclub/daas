@@ -122,7 +122,7 @@ export async function main() {
 		await maintainActiveMachines()
 		await wait(5000)
 		await replaceOldMachines()
-	}, 60000 /* TODO make this customizable */)
+	}, 10000 /* TODO make this customizable */)
 	await PubSub.listen("database_changes", () =>
 		handleLobbiesChanged().catch(console.error)
 	)

@@ -3,6 +3,7 @@ import { Bots, getMachinesAdapter } from "@daas/db-adapter"
 import { Communications, MessageType } from "@daas/communications"
 import { getIepaas } from "../api/support/getIepaas"
 import { sendManyTimes } from "./sendManyTimes"
+import { EventHandler } from "./EventHandler"
 
 export async function launchMachine(): Promise<Machine | null> {
 	console.log("Launching one machine...")
@@ -13,6 +14,7 @@ export async function launchMachine(): Promise<Machine | null> {
 	])
 
 	if (bots.length === 0) {
+		// TODO "not enough bots" alert
 		return null
 	}
 
@@ -35,6 +37,8 @@ export async function launchMachine(): Promise<Machine | null> {
 	await Machines.commit()
 
 	console.log("Machine launched successfully")
+
+	await EventHandler.watch(machine)
 
 	return machine
 }

@@ -37,7 +37,6 @@ export const createLobbyValidations = [
 		}
 
 		value.forEach(player => {
-			// TODO test
 			if (value.filter(it => it.steamId === player.steamId).length > 1) {
 				throw new Error(`Player ${player.steamId} appears more than once.`)
 			}

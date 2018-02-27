@@ -4,7 +4,9 @@ dotenv.config()
 
 import { Entity } from "@daas/model"
 import {
-	getConfigAdapter, getLobbiesAdapter, getMachinesAdapter,
+	getConfigAdapter,
+	getLobbiesAdapter,
+	getMachinesAdapter,
 	PubSub
 } from "@daas/db-adapter"
 import { launchMachine } from "./launchMachine"
@@ -68,8 +70,11 @@ async function replaceOldMachines() {
 			) {
 				// If a machine is too old, spawn a new one to take its place
 				// maintainActiveMachines() will take care of killing the
-				console.log(`The machine #${machine.id
-				} has been idle for too long. Launching its replacement...`)
+				console.log(
+					`The machine #${
+						machine.id
+					} has been idle for too long. Launching its replacement...`
+				)
 				await launchMachine()
 			}
 		})
@@ -83,7 +88,8 @@ async function handleLobbiesChanged() {
 
 	const [lobbiesWithoutMachine, idleMachines] = await Promise.all([
 		getLobbiesAdapter().then(it => it.findAllWithoutMachine()),
-		getMachinesAdapter().then(it => it.findAllIdle())
+		getMachinesAdapter()
+			.then(it => it.findAllIdle())
 			// Sort by the oldest machines, which are mor likely to be up and running
 			.then(m =>
 				m.sort((a, b) => a.startedAt.getTime() - b.startedAt.getTime())
@@ -126,6 +132,9 @@ export async function main() {
 	await PubSub.listen("database_changes", () =>
 		handleLobbiesChanged().catch(console.error)
 	)
+
+	// TODO find all machines in game and EventHandler.watch them
+	// (just in case the worker was restarted)
 }
 
 main().catch(console.error)

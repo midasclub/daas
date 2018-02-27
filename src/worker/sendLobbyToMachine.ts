@@ -7,7 +7,7 @@ export async function sendLobbyToMachine(
 	lobby: Lobby,
 	machine: Machine
 ): Promise<void> {
-	lobby = await getLobbiesAdapter().then(it => it.update(lobby, {machine}))
+	lobby = await getLobbiesAdapter().then(it => it.update(lobby, { machine }))
 
 	const comms = await Communications.open(machine.id + "")
 	sendManyTimes(comms, MessageType.LOBBY_INFO, { lobbyId: lobby.id })

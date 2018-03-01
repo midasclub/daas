@@ -51,7 +51,7 @@ export function generateError(errorCode: string, info?: any) {
 			break
 		case "STEAM_GUARD_CODE_MISSING":
 			additionalProperties.message =
-				"The bot has Steam Guard enabled but you didn't provide a Steam Guard code."
+				"The support has Steam Guard enabled but you didn't provide a Steam Guard code."
 			break
 		case "STEAM_INVALID_LOGIN":
 			additionalProperties.message =

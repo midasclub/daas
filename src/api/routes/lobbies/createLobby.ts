@@ -23,6 +23,7 @@ export const createLobby = createController(async req => {
 	const lobby = await LobbiesTransaction.insert(dataToInsert as any)
 	await LobbiesTransaction.concerning(lobby).Players.insert(data.players)
 
+	// This will trigger handleLobbiesChanged in the worker and send the lobby to a support
 	await LobbiesTransaction.commit()
 
 	return [200, lobby.serialize()]

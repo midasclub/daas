@@ -13,7 +13,8 @@ export async function createFirstApiKeyIfNeeded() {
 			permissions: {
 				bots: ApiAccessLevel.WRITE,
 				lobbies: ApiAccessLevel.WRITE,
-				apiKeys: ApiAccessLevel.WRITE
+				apiKeys: ApiAccessLevel.WRITE,
+				webhooks: ApiAccessLevel.WRITE
 			}
 		})
 

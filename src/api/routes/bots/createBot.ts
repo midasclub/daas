@@ -4,7 +4,7 @@ import { validationResult } from "express-validator/check"
 import { matchedData } from "express-validator/filter"
 import { createController } from "../../support/createController"
 import { generateError } from "../../support/generateError"
-import { validateBotCredentials } from "../../../bot/validateSteamBotCredentials"
+import { validateBotCredentials } from "../../../support/validateSteamBotCredentials"
 
 export const createBot = createController(async req => {
 	const errors = validationResult(req)

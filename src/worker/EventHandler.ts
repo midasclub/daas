@@ -1,7 +1,10 @@
-import { Machine, MatchResult } from "@daas/model"
+import { Lobby, Machine, MatchResult, WebHookEventType } from "@daas/model"
 import { Communications, MessageType } from "@daas/communications"
 import { Observable } from "rxjs"
 import { markMachineAsTerminated } from "./markMachineAsTerminated"
+import { disableBot } from "../support/disableBot"
+import { getLobbiesAdapter } from "@daas/db-adapter"
+import { sendWebhooks } from "./sendWebhooks"
 
 export class EventHandler {
 	/**
@@ -16,17 +19,35 @@ export class EventHandler {
 
 		const stream = (type: MessageType) =>
 			comms.adapterMessageStream.filter(it => it.type === type)
-		const close = () => Observable.fromPromise(comms.close().then(() => console.log(`Stopped watching machine #${machine.id}`)))
+		const fp = Observable.fromPromise
+		const close = () =>
+			fp(
+				comms
+					.close()
+					.then(() => console.log(`Stopped watching machine #${machine.id}`))
+			)
 
 		const subscriptions = [
-			// TODO handle stream(MessageType.PLAYER_STATUS_UPDATE)
-			// TODO handle stream(MessageType.GAME_STARTED)
+			stream(MessageType.PLAYER_STATUS_UPDATE).flatMap(msg =>
+				fp(
+					this.handlePlayerReadyStatusUpdate(
+						machine,
+						msg.info.steamId,
+						msg.info.isReady
+					)
+				)
+			),
+			stream(MessageType.GAME_STARTED).flatMap(() =>
+				fp(this.handleGameStarted(machine))
+			),
 			stream(MessageType.GAME_FINISHED)
-				.flatMap(msg => this.handleGameFinished(machine, msg.info.matchResult))
+				.flatMap(msg =>
+					fp(this.handleGameFinished(machine, msg.info.matchResult))
+				)
 				.flatMap(close),
 			stream(MessageType.GAME_CANCELLED)
 				.flatMap(msg =>
-					this.handleGameCancelled(machine, msg.info.notReadyPlayers)
+					fp(this.handleGameCancelled(machine, msg.info.notReadyPlayers))
 				)
 				.flatMap(close)
 		]
@@ -34,21 +55,68 @@ export class EventHandler {
 		subscriptions.forEach(it => it.subscribe(() => {}, console.error))
 	}
 
+	private static async handlePlayerReadyStatusUpdate(
+		machine: Machine,
+		playerSteamId: string,
+		isReady: boolean
+	) {
+		const lobby = await EventHandler.getLobby(machine)
+		await sendWebhooks(WebHookEventType.PLAYER_READY_STATUS_UPDATE, lobby, {
+			player: {
+				steamId: playerSteamId,
+				isReady
+			}
+		})
+	}
+
+	private static async handleGameStarted(machine: Machine) {
+		const lobby = await EventHandler.getLobby(machine)
+		await sendWebhooks(WebHookEventType.GAME_STARTED, lobby, {
+			matchId: lobby.matchId
+		})
+	}
+
 	private static async handleGameFinished(
 		machine: Machine,
 		matchResult: MatchResult
 	) {
-		await markMachineAsTerminated(machine)
-
-		// TODO send the match result as webhook
+		await Promise.all([
+			markMachineAsTerminated(machine),
+			disableBot(machine.bot, 3 /*h*/ * 60 /*m*/), // TODO allow to customize
+			EventHandler.getLobby(machine).then(lobby =>
+				sendWebhooks(WebHookEventType.GAME_FINISHED, lobby, {
+					matchResult: MatchResult[matchResult]
+				})
+			)
+		])
 	}
 
 	private static async handleGameCancelled(
 		machine: Machine,
 		notReadyPlayerIds: Array<string>
 	) {
-		await markMachineAsTerminated(machine)
+		await Promise.all([
+			markMachineAsTerminated(machine),
+			disableBot(machine.bot, 30 /*m*/), // TODO allow to customize
+			EventHandler.getLobby(machine).then(lobby =>
+				sendWebhooks(WebHookEventType.GAME_CANCELLED, lobby, {
+					notReadyPlayerIds
+				})
+			)
+		])
+	}
 
-		// TODO send the match result as webhook
+	private static async getLobby(machine: Machine): Promise<Lobby> {
+		const lobby = await getLobbiesAdapter().then(it =>
+			it.findByMachine(machine)
+		)
+
+		if (lobby === null) {
+			throw new Error(
+				`Cannot find the lobby handled by machine #${machine.id}!`
+			)
+		}
+
+		return lobby
 	}
 }

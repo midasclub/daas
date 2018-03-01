@@ -37,7 +37,7 @@ async function maintainActiveMachines() {
 	if (difference < 0) {
 		// We have less active machines than we want to. Spawn one more.
 		// We will launch only one at a time so we don't accidentally
-		// launch the same bot twice.
+		// launch the same support twice.
 		await launchMachine()
 	} else if (difference > 0) {
 		// We have more machines than we want to. Kill the oldest ones until we have

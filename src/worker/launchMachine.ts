@@ -9,7 +9,11 @@ export async function launchMachine(): Promise<Machine | null> {
 	console.log("Launching one machine...")
 
 	const [bots, Machines] = await Promise.all([
-		Bots.findAllByStatus(BotStatus.OFFLINE),
+		Bots.findAllByStatus(BotStatus.OFFLINE).then(it =>
+			it.filter(
+				it => !it.disabledUntil || Date.now() > it.disabledUntil.getTime()
+			)
+		),
 		getMachinesAdapter(true)
 	])
 
@@ -18,7 +22,6 @@ export async function launchMachine(): Promise<Machine | null> {
 		return null
 	}
 
-	// TODO take disabled until into account
 	const randomBot = bots[Math.floor(Math.random() * bots.length)]
 	const machine = await Machines.insert({ bot: randomBot })
 

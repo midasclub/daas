@@ -23,7 +23,7 @@
 	"license": "MIT",
 	"dependencies": {
 		"@daas/communications": "0.0.1-dev.5",
-		"@daas/core": "0.0.1-dev.5",
+		"@daas/core": "0.0.1-dev.8",
 		"@daas/db-adapter": "0.0.1-dev.15",
 		"@daas/model": "0.0.1-dev.5",
 		"@iepaas/js-client": "0.0.1-dev.6",

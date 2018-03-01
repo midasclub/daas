@@ -12,5 +12,5 @@ export async function sendLobbyToMachine(
 	const comms = await Communications.open(machine.id + "")
 	sendManyTimes(comms, MessageType.LOBBY_INFO, { lobbyId: lobby.id })
 
-	console.log(`Sent lobby #${lobby.id} to machine ${machine.id}.`)
+	console.log(`Sent lobby #${lobby.id} to machine #${machine.id}.`)
 }

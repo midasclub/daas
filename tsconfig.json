@@ -13,6 +13,7 @@
 			"DOM"
 		],
 		"outDir": "build",
-		"inlineSourceMap": true
+		"inlineSourceMap": true,
+		"allowSyntheticDefaultImports": true
 	}
 }

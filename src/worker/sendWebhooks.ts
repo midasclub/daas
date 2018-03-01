@@ -32,6 +32,8 @@ async function sendWebhook(webhook: WebHook, lobby: Lobby, data: any) {
 				retries: 10
 			}
 		)
+
+		console.log(`Sent ${WebHookEventType[webhook.eventType]} webhook to ${webhook.url}`)
 	} catch (e) {
 		console.error(`Webhook #${webhook.id} (${webhook.url}) failed!`)
 		console.error(e)

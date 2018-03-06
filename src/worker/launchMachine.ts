@@ -41,6 +41,7 @@ export async function launchMachine(): Promise<Machine | null> {
 
 	console.log("Machine launched successfully")
 
+	comms.close().catch(console.error)
 	await EventHandler.watch(machine)
 
 	return machine

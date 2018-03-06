@@ -7,6 +7,7 @@ import { queryLobby } from "./queryLobby"
 import { getLobby } from "./getLobby"
 import { createLobby } from "./createLobby"
 import { createLobbyValidations } from "./validations/createLobbyValidations"
+import { players } from "./players"
 
 const router = Router()
 
@@ -28,5 +29,7 @@ router
 	// TODO update
 	// TODO delete
 	.all(methodNotAllowed)
+
+router.use("/:id/players", players)
 
 export { router as lobbies }

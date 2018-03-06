@@ -61,6 +61,10 @@ export function generateError(errorCode: string, info?: any) {
 			additionalProperties.message = oneLine`Steam sent an error code unsupported by DaaS: 
 			${info}. You may check what it means here: https://steamerrors.com/`
 			break
+		case "CANNOT_RESEND_INVITE_LOBBY_NOT_OPEN":
+			statusCode = 422
+			additionalProperties.message =
+				"Cannot resend an invite in a lobby that is not OPEN."
 	}
 	return [
 		statusCode,

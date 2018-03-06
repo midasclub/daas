@@ -3,6 +3,8 @@ import fetch from "node-fetch"
 import { Lobby, WebHook, WebHookEventType } from "@daas/model"
 import { WebHooks } from "@daas/db-adapter"
 
+const { version } = require("../../package.json")
+
 export async function sendWebhooks(
 	eventType: WebHookEventType,
 	lobby: Lobby,
@@ -46,6 +48,7 @@ async function sendWebhook(webhook: WebHook, lobby: Lobby, data: any) {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
+				"User-Agent": `DaaS v${version}`,
 				"X-DaaS-Webhook-Secret": webhook.secret
 			},
 			body: JSON.stringify({
@@ -55,7 +58,9 @@ async function sendWebhook(webhook: WebHook, lobby: Lobby, data: any) {
 			})
 		})
 
-		console.log(`Sent ${WebHookEventType[webhook.eventType]} webhook to ${webhook.url}`)
+		console.log(
+			`Sent ${WebHookEventType[webhook.eventType]} webhook to ${webhook.url}`
+		)
 	} catch (e) {
 		console.error(`Webhook #${webhook.id} (${webhook.url}) failed!`)
 		console.error(e)

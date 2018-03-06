@@ -22,8 +22,8 @@
 	"author": "Pablo Rodríguez <pabloviolin8@gmail.com>",
 	"license": "MIT",
 	"dependencies": {
-		"@daas/communications": "0.0.1-dev.5",
-		"@daas/core": "0.0.1-dev.8",
+		"@daas/communications": "0.0.1-dev.6",
+		"@daas/core": "0.0.1-dev.9",
 		"@daas/db-adapter": "0.0.1-dev.15",
 		"@daas/model": "0.0.1-dev.5",
 		"@iepaas/js-client": "0.0.1-dev.6",

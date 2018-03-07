@@ -1,14 +1,16 @@
 import { Lobby, Machine, MatchResult, WebHookEventType } from "@daas/model"
 import { Communications, MessageType } from "@daas/communications"
-import { Observable } from "rxjs"
+import { getLobbiesAdapter } from "@daas/db-adapter"
+import { Observable, Subject, Subscription } from "rxjs"
 import { markMachineAsTerminated } from "./markMachineAsTerminated"
 import { disableBot } from "../support/disableBot"
-import { getLobbiesAdapter } from "@daas/db-adapter"
 import { sendWebhooks } from "./sendWebhooks"
 
 export class EventHandler {
+	private static unwatchCommandStream = new Subject<Machine>()
+
 	/**
-	 * Watches for the events a machine might send, and handles them accordingly
+	 * Watches for the events a machine might send, and handles them accordingly.
 	 *
 	 * @param machine The machine to watch
 	 */
@@ -20,14 +22,17 @@ export class EventHandler {
 		const stream = (type: MessageType) =>
 			comms.adapterMessageStream.filter(it => it.type === type)
 		const fp = Observable.fromPromise
+
+		let subscriptions: Array<Subscription> = []
 		const close = () =>
 			fp(
 				comms
 					.close()
 					.then(() => console.log(`Stopped watching machine #${machine.id}`))
+					.then(() => subscriptions.forEach(it => it.unsubscribe()))
 			)
 
-		const subscriptions = [
+		const streams = [
 			stream(MessageType.PLAYER_STATUS_UPDATE).flatMap(msg =>
 				fp(
 					this.handlePlayerReadyStatusUpdate(
@@ -49,10 +54,25 @@ export class EventHandler {
 				.flatMap(msg =>
 					fp(this.handleGameCancelled(machine, msg.info.notReadyPlayers))
 				)
+				.flatMap(close),
+			this.unwatchCommandStream
+				.filter(it => it.id === machine.id)
 				.flatMap(close)
 		]
 
-		subscriptions.forEach(it => it.subscribe(() => {}, console.error))
+		subscriptions = streams.map(it => it.subscribe(() => {}, console.error))
+	}
+
+	/**
+	 * Stops watching for machine events. If the machine exits by itself (the game is cancelled,
+	 * or the game finishes successfully), it will stop watching automatically. However, if the
+	 * machine is automatically killed (sent the KILL_YOURSELF message), then this is needed
+	 * in order to free up a database connection.
+	 *
+	 * @param machine The machine to watch
+	 */
+	public static unwatch(machine: Machine) {
+		this.unwatchCommandStream.next(machine)
 	}
 
 	private static async handlePlayerReadyStatusUpdate(

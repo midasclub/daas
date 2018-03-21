@@ -9,7 +9,7 @@ export const updateApiKeyValidations = [
 	body("permissions")
 		.custom(it => typeof it === "object")
 		.optional({ nullable: true }),
-	...["bots", "lobbies", "apiKeys"].map(perm =>
+	...["bots", "lobbies", "apiKeys", "webhooks"].map(perm =>
 		body(`permissions.${perm}`)
 			.custom(createEnumValidator(ApiAccessLevel))
 			.optional()

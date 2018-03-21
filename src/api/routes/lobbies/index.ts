@@ -8,6 +8,9 @@ import { getLobby } from "./getLobby"
 import { createLobby } from "./createLobby"
 import { createLobbyValidations } from "./validations/createLobbyValidations"
 import { players } from "./players"
+import { deleteLobby } from "./deleteLobby"
+import { updateLobby } from "./updateLobby"
+import { updateLobbyValidations } from "./validations/updateLobbyValidations"
 
 const router = Router()
 
@@ -26,8 +29,17 @@ router.use("/:id", queryLobby)
 router
 	.route("/:id")
 	.get(requirePerm("lobbies", ApiAccessLevel.READ), getLobby)
-	// TODO update
-	// TODO delete
+	.put(
+		requirePerm("lobbies", ApiAccessLevel.WRITE),
+		updateLobbyValidations,
+		updateLobby
+	)
+	.patch(
+		requirePerm("lobbies", ApiAccessLevel.WRITE),
+		updateLobbyValidations,
+		updateLobby
+	)
+	.delete(requirePerm("lobbies", ApiAccessLevel.WRITE), deleteLobby)
 	.all(methodNotAllowed)
 
 router.use("/:id/players", players)

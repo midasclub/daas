@@ -17,5 +17,5 @@ export const createWebhook = createController(async req => {
 	dataToInsert.eventType = WebHookEventType[dataToInsert.eventType]
 
 	const webhook = await WebHooks.insert(dataToInsert)
-	return [200, webhook.serialize()]
+	return [201, webhook.serialize()]
 })

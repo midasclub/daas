@@ -6,7 +6,7 @@ import { createEnumValidator } from "../../../support/validation/createEnumValid
 export const createApiKeyValidations = [
 	body("label").isLength({ min: 1, max: 30 }),
 	body("permissions").custom(
-		createObjectHasKeysValidator(["bots", "lobbies", "apiKeys"])
+		createObjectHasKeysValidator(["bots", "lobbies", "apiKeys", "webhooks"])
 	),
 	body("permissions.*").custom(createEnumValidator(ApiAccessLevel))
 ]

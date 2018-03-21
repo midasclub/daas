@@ -47,7 +47,7 @@ export const createBot = createController(async req => {
 				sentryFile: sentryFile
 			})
 
-			return [200, bot.serialize()]
+			return [201, bot.serialize()]
 		}
 	} else {
 		return generateError(error!, additionalErrorData)

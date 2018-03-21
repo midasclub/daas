@@ -20,7 +20,7 @@ const loggableList = (elements: Array<Entity>) =>
 		? "none"
 		: `${elements.map(it => `#${it.id}`).join(", ")} (total: ${
 				elements.length
-			})`
+		  })`
 
 async function maintainActiveMachines() {
 	console.log(`Beginning maintainActiveMachines()`)

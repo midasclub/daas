@@ -27,6 +27,11 @@ export const updateApiKey = createController(async req => {
 				dataToUpdate.permissions.lobbies
 			)
 		}
+		if (dataToUpdate.permissions.webhooks) {
+			dataToUpdate.permissions.webhooks = convert(
+				dataToUpdate.permissions.webhooks
+			)
+		}
 		if (dataToUpdate.permissions.apiKeys) {
 			dataToUpdate.permissions.apiKeys = convert(
 				dataToUpdate.permissions.apiKeys

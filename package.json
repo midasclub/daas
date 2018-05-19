@@ -10,7 +10,9 @@
 		"migrations:up": "node -r dotenv/config ./node_modules/.bin/daas-migrate",
 		"build": "tsc",
 		"core": "node -r source-map-support/register ./node_modules/@daas/core/build/src/index.js",
-		"reformat": "prettier --write \"**/*.ts\""
+		"reformat": "prettier --write \"**/*.ts\"",
+		"docker:start": "docker-compose up --build",
+		"docker:destroy": "docker-compose rm -f && docker volume rm daas-server_database"
 	},
 	"keywords": [
 		"daas",
@@ -52,5 +54,9 @@
 		"prettier": "^1.9.2",
 		"typescript": "^2.6.2"
 	},
-	"private": true
+	"private": true,
+	"engines": {
+		"node": "8.11.2",
+		"yarn": "1.6.0"
+	}
 }

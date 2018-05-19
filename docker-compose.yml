@@ -1,0 +1,24 @@
+version: "3"
+
+volumes:
+  database:
+services:
+  database:
+    image: daas-db
+    build:
+      context: scripts/containers/database
+    ports: ["54320:5432"]
+    volumes:
+      - database:/var/lib/postgresql/data
+  daas:
+    image: daas-server
+    build:
+      context: .
+    command: wait-for-it database:5432 -- run-daas
+    ports: ["4000:4000"]
+    environment:
+      DATABASE_URL: postgres://daas:daas@database:5432/daas
+      PORT: 4000
+    env_file: .env
+    depends_on:
+      - database

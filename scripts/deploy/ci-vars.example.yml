@@ -14,7 +14,7 @@ aws:
       instance-type: t2.nano
       security-group: sg-00000000000000000
       index-bucket-s3-uri: s3://my-bucket/daas-worker-launch-configs
-      iam-instance-profile: arn:aws:iam::my-aws-account-id:role/daas-worker
+      iam-instance-profile: arn:aws:iam::my-aws-account-id:instance-profile/daas-worker
     key-pair-name: MyKeyPair
   auto-scaling-groups:
     api: daas-api

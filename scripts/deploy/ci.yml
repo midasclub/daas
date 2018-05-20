@@ -35,7 +35,7 @@ resources:
 - name: api-launch-config
   type: launch-config
   source:
-    namespace: ((launch-configs.api.namespace))
+    namespace: ((aws.launch-configs.api.namespace))
     launch_configuration_options:
       instance_type: ((aws.launch-configs.api.instance-type))
       security_groups:
@@ -50,7 +50,7 @@ resources:
 - name: worker-launch-config
   type: launch-config
   source:
-    namespace: ((launch-configs.worker.namespace))
+    namespace: ((aws.launch-configs.worker.namespace))
     launch_configuration_options:
       instance_type: ((aws.launch-configs.worker.instance-type))
       security_groups:

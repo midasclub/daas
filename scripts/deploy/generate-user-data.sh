@@ -2,6 +2,9 @@
 
 set -e -x
 
+ls ami
+cat ami/id
+
 cat > "user-data/user-data" << EOF
 #!/bin/bash
 

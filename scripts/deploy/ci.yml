@@ -57,6 +57,7 @@ resources:
       security_groups:
         - ((aws.launch-configs.worker.security-group))
       key_name: ((aws.launch-configs.key-pair-name))
+      iam_instance_profile: ((aws.launch-configs.worker.iam-instance-profile))
     index_bucket_s3_uri: ((aws.launch-configs.index-bucket-s3-uri))
     credentials:
       access_key_id: ((aws_role.access_key_id))
@@ -110,7 +111,6 @@ jobs:
           params:
             ami: ami
             user_data: user-data/user-data
-            key_name: ((aws.launch-configs.key-pair-name))
       - do:
         - task: generate-worker-user-data
           file: git-repo/scripts/deploy/generate-user-data.yml
@@ -125,5 +125,83 @@ jobs:
           params:
             ami: ami
             user_data: user-data/user-data
-            key_name: ((aws.launch-configs.key-pair-name))
-            iam_instance_profile: ((aws.launch-configs.worker.iam-instance-profile))
+
+- name: deploy
+  plan:
+    aggregate:
+      - get: git-repo
+      - get: api-launch-config
+        trigger: true
+        passed: [build-launch-configs]
+      - get: worker-launch-config
+        trigger: true
+        passed: [build-launch-configs]
+    aggregate:
+      do:
+        - task: update-api-auto-scaling-group
+          config:
+            platform: linux
+            image_resource:
+              type: docker-image
+              source:
+                repository: cgswong/aws
+                tag: aws
+            inputs:
+              - name: api-launch-config
+            params:
+              - LC_INPUT_DIR: api-launch-config
+              - AWS_ACCESS_KEY_ID: ((aws_role.access_key_id))
+              - AWS_SECRET_ACCESS_KEY: ((aws_role.secret_access_key))
+              - AWS_DEFAULT_REGION: ((aws.region))
+              - AUTO_SCALING_GROUP_NAME: ((aws.auto-scaling-groups.api))
+            run:
+              path: git-repo/scripts/deploy/update-auto-scaling-group.sh
+        - task: rotate-api-auto-scaling-group
+          config:
+            platform: linux
+            image_resource:
+              type: docker-image
+              source:
+                repository: mellamopablo/aws-asg-rotator
+                tag: 1.0.1
+            params:
+              - AWS_ACCESS_KEY_ID: ((aws_role.access_key_id))
+              - AWS_SECRET_ACCESS_KEY: ((aws_role.secret_access_key))
+              - AWS_REGION: ((aws.region))
+              - ASG_NAME: ((aws.auto-scaling-groups.api))
+            run:
+              path: rotate-asg
+      do:
+        - task: update-worker-auto-scaling-group
+          config:
+            platform: linux
+            image_resource:
+              type: docker-image
+              source:
+                repository: cgswong/aws
+                tag: aws
+            inputs:
+              - name: worker-launch-config
+            params:
+              - LC_INPUT_DIR: worker-launch-config
+              - AWS_ACCESS_KEY_ID: ((aws_role.access_key_id))
+              - AWS_SECRET_ACCESS_KEY: ((aws_role.secret_access_key))
+              - AWS_DEFAULT_REGION: ((aws.region))
+              - AUTO_SCALING_GROUP_NAME: ((aws.auto-scaling-groups.worker))
+            run:
+              path: git-repo/scripts/deploy/update-auto-scaling-group.sh
+        - task: rotate-worker-auto-scaling-group
+          config:
+            platform: linux
+            image_resource:
+              type: docker-image
+              source:
+                repository: mellamopablo/aws-asg-rotator
+                tag: 1.0.1
+            params:
+              - AWS_ACCESS_KEY_ID: ((aws_role.access_key_id))
+              - AWS_SECRET_ACCESS_KEY: ((aws_role.secret_access_key))
+              - AWS_REGION: ((aws.region))
+              - ASG_NAME: ((aws.auto-scaling-groups.worker))
+            run:
+              path: rotate-asg

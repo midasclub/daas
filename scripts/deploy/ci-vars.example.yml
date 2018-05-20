@@ -15,6 +15,9 @@ aws:
       iam-instance-profile: arn:aws:iam::my-aws-account-id:role/daas-worker
     key-pair-name: MyKeyPair
     index-bucket-s3-uri: s3://my-bucket/daas-launch-configs
+  auto-scaling-groups:
+    api: daas-api
+    worker: daas-worker
 nginx:
   server_name: daas.example.com
 log-transmission:

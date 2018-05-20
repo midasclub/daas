@@ -5,6 +5,11 @@ resource_types:
   source:
     repository: jdub/packer-resource
 
+- name: launch-config
+  type: docker-image
+  source:
+    repository: mellamopablo/aws-launch-configuration-resource
+
 resources:
 
 - name: git-repo
@@ -26,6 +31,36 @@ resources:
     aws_access_key_id: ((aws_role.access_key_id))
     aws_secret_access_key: ((aws_role.secret_access_key))
     region: ((aws.region))
+
+- name: api-launch-config
+  type: launch-config
+  source:
+    namespace: ((launch-configs.api.namespace))
+    launch_configuration_options:
+      instance_type: ((aws.launch-configs.api.instance-type))
+      security_groups:
+        - ((aws.launch-configs.api.security-group))
+      key_name: ((aws.launch-configs.key-pair-name))
+    index_bucket_s3_uri: ((aws.launch-configs.index-bucket-s3-uri))
+    credentials:
+      access_key_id: ((aws_role.access_key_id))
+      secret_access_key: ((aws_role.secret_access_key))
+      region: ((aws.region))
+
+- name: worker-launch-config
+  type: launch-config
+  source:
+    namespace: ((launch-configs.worker.namespace))
+    launch_configuration_options:
+      instance_type: ((aws.launch-configs.worker.instance-type))
+      security_groups:
+        - ((aws.launch-configs.worker.security-group))
+      key_name: ((aws.launch-configs.key-pair-name))
+    index_bucket_s3_uri: ((aws.launch-configs.index-bucket-s3-uri))
+    credentials:
+      access_key_id: ((aws_role.access_key_id))
+      secret_access_key: ((aws_role.secret_access_key))
+      region: ((aws.region))
 
 jobs:
 
@@ -51,3 +86,40 @@ jobs:
         aws_secret_key: ((aws_role.secret_access_key))
         docker_image: ((docker.endpoint))/((docker.repo))
         nginx_server_name: ((nginx.server_name))
+
+- name: build-launch-configs
+  plan:
+    - aggregate:
+      - get: git-repo
+      - get: ami
+        trigger: true
+        passed: [build-ami]
+    - aggregate:
+      - do:
+        - task: generate-api-user-data
+          file: git-repo/scripts/deploy/generate-user-data.yml
+          params:
+            AWS_REGION: ((aws.region))
+            DOCKER_REPO: ((docker.endpoint))/((docker.repo))
+            DOCKER_COMMAND: daas-server
+            LOG_ADDRESS: ((log-transmission.address))
+            LOG_PORT: ((log-transmission.ports.api))
+            LOG_PORT_CORE: ((log-transmission.ports.core))
+        - put: api-launch-config
+          params:
+            ami: ami
+            user_data: user-data/user-data
+      - do:
+        - task: generate-worker-user-data
+          file: git-repo/scripts/deploy/generate-user-data.yml
+          params:
+            AWS_REGION: ((aws.region))
+            DOCKER_REPO: ((docker.endpoint))/((docker.repo))
+            DOCKER_COMMAND: daas-worker
+            LOG_ADDRESS: ((log-transmission.address))
+            LOG_PORT: ((log-transmission.ports.worker))
+            LOG_PORT_CORE: ((log-transmission.ports.core))
+        - put: worker-launch-config
+          params:
+            ami: ami
+            user_data: user-data/user-data

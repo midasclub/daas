@@ -3,5 +3,22 @@ docker:
   repo: my-daas-repo-name
 aws:
   region: eu-west-1
+  launch-configs:
+    api:
+      namespace: daas-api
+      instance-type: t2.nano
+      security-group: sg-00000000000000000
+    worker:
+      namespace: daas-worker
+      instance-type: t2.nano
+      security-group: sg-00000000000000000
+    key-pair-name: MyKeyPair
+    index-bucket-s3-uri: s3://my-bucket/daas-launch-configs
 nginx:
   server_name: daas.example.com
+log-transmission:
+  address: 172.0.0.1
+  ports:
+    api: 6000
+    worker: 6001
+    core: 6002

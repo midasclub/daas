@@ -137,7 +137,7 @@ jobs:
         trigger: true
         passed: [build-launch-configs]
     aggregate:
-      do:
+      - do:
         - task: update-api-auto-scaling-group
           config:
             platform: linux
@@ -171,7 +171,7 @@ jobs:
               - ASG_NAME: ((aws.auto-scaling-groups.api))
             run:
               path: rotate-asg
-      do:
+      - do:
         - task: update-worker-auto-scaling-group
           config:
             platform: linux

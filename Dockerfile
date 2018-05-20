@@ -14,5 +14,6 @@ RUN curl -so- https://raw.githubusercontent.com/MeLlamoPablo/nnny/v1.0.0/nnny.sh
 
 ADD . /app
 RUN yarn
+RUN yarn build
 
 RUN scripts/containers/daas/set-run-configurations.sh

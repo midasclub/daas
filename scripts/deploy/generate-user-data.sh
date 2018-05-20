@@ -19,6 +19,6 @@ sudo docker run \\
     -e PORT=3000 \\
     -p "3000:3000" \\
     "${DOCKER_REPO}" \\
-    "${DOCKER_COMMAND}" | \\
+    "${DOCKER_COMMAND}" 2>&1 | \\
     nc ${LOG_ADDRESS} ${LOG_PORT}
 EOF

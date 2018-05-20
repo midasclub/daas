@@ -7,7 +7,7 @@ export async function launchComputeInstance(command: string) {
 
 	const logTransmissionCommand =
 		(LOG_TRANSMISSION_ADDRESS && LOG_TRANSMISSION_PORT_CORE)
-			? ` | nc ${LOG_TRANSMISSION_ADDRESS} ${LOG_TRANSMISSION_PORT_CORE}`
+			? ` 2>&1 | nc ${LOG_TRANSMISSION_ADDRESS} ${LOG_TRANSMISSION_PORT_CORE}`
 			: ""
 
 	const id = await runInstance(

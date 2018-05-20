@@ -2,13 +2,10 @@
 
 set -e -x
 
-ls ami
-cat ami/id
+export AWS_AMI_ID=$(cat ami/id | sed 's/"//g')
 
 cat > "user-data/user-data" << EOF
 #!/bin/bash
-
-export AWS_AMI_ID=$(cat ami/id | sed 's/"//g')
 
 sudo docker run \\
     -e DATABASE_URL="${DATABASE_URL}" \\

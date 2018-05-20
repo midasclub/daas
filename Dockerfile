@@ -1,7 +1,7 @@
 FROM ubuntu:18.04
 
 RUN apt-get update
-RUN apt-get install curl git jq postgresql -y
+RUN DEBIAN_FRONTEND=noninteractive apt-get install curl git jq postgresql -y
 
 ADD scripts/wait-for-it.sh /usr/local/bin/wait-for-it
 

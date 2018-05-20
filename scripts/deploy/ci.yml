@@ -1,0 +1,53 @@
+resource_types:
+
+- name: packer
+  type: docker-image
+  source:
+    repository: jdub/packer-resource
+
+resources:
+
+- name: git-repo
+  type: git
+  source:
+    uri: https://github.com/midasclub/daas
+    branch: master
+
+- name: docker-image
+  type: docker-image
+  source:
+    repository: ((docker.endpoint))/((docker.repo))
+    aws_access_key_id: ((aws_role.access_key_id))
+    aws_secret_access_key: ((aws_role.secret_access_key))
+
+- name: ami
+  type: packer
+  source:
+    aws_access_key_id: ((aws_role.access_key_id))
+    aws_secret_access_key: ((aws_role.secret_access_key))
+    region: ((aws.region))
+
+jobs:
+
+- name: build-docker-image
+  plan:
+    - get: git-repo
+      trigger: true
+    - put: docker-image
+      params:
+        build: git-repo
+
+- name: build-ami
+  plan:
+    - aggregate:
+      - get: git-repo
+      - get: docker-image
+        trigger: true
+        passed: [build-docker-image]
+    - put: ami
+      params:
+        template: git-repo/scripts/deploy/build-image.packer.json
+        aws_access_key: ((aws_role.access_key_id))
+        aws_secret_key: ((aws_role.secret_access_key))
+        docker_image: ((docker.endpoint))/((docker.repo))
+        nginx_server_name: ((nginx.server_name))

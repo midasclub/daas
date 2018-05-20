@@ -1,0 +1,48 @@
+{
+	"variables": {
+		"aws_access_key": "",
+		"aws_secret_key": "",
+		"docker_image": "",
+		"nginx_server_name": ""
+	},
+	"builders": [
+		{
+			"type": "amazon-ebs",
+			"access_key": "{{user `aws_access_key`}}",
+			"secret_key": "{{user `aws_secret_key`}}",
+			"region": "sa-east-1",
+			"source_ami_filter": {
+				"filters": {
+					"virtualization-type": "hvm",
+					"name": "ubuntu/images/*ubuntu-xenial-16.04-amd64-server-*",
+					"root-device-type": "ebs"
+				},
+				"owners": [
+					"099720109477"
+				],
+				"most_recent": true
+			},
+			"instance_type": "t2.large",
+			"ssh_username": "ubuntu",
+			"ami_name": "midas-{{user `ami_name`}}-{{uuid}}"
+		}
+	],
+	"provisioners": [
+		{
+			"type": "shell",
+			"script": "docker-provisioner.sh",
+			"environment_vars": [
+				"AWS_ACCESS_KEY_ID={{user `aws_access_key`}}",
+				"AWS_SECRET_ACCESS_KEY={{user `aws_secret_key`}}",
+				"DOCKER_IMAGE={{user `docker_image`}}"
+			]
+		},
+		{
+			"type": "shell",
+			"script": "nginx-provisioner.sh",
+			"environment_vars": [
+				"HOST_NAME={{user `nginx_server_name`}}"
+			]
+		}
+	]
+}

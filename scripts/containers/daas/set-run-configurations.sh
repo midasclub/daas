@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-cat > /usr/local/bin/run-daas << EOF
+cat > /usr/local/bin/daas-server << EOF
 #!/bin/bash
 set -e
 
@@ -26,4 +26,13 @@ fi
 yarn start
 EOF
 
-chmod +x /usr/local/bin/run-daas
+cat > /usr/local/bin/daas-core << EOF
+#!/bin/bash
+set -e
+
+cd /app
+yarn core \$@
+EOF
+
+chmod +x /usr/local/bin/daas-server
+chmod +x /usr/local/bin/daas-core

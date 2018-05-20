@@ -11,10 +11,10 @@ services:
     volumes:
       - database:/var/lib/postgresql/data
   daas:
-    image: daas-server
+    image: daas
     build:
       context: .
-    command: wait-for-it database:5432 -- run-daas
+    command: wait-for-it database:5432 -- daas-server
     ports: ["4000:4000"]
     environment:
       DATABASE_URL: postgres://daas:daas@database:5432/daas

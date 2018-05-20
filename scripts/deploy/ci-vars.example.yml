@@ -1,0 +1,7 @@
+docker:
+  endpoint: my-aws-account-id.dkr.ecr.eu-west-1.amazonaws.com
+  repo: my-daas-repo-name
+aws:
+  region: eu-west-1
+nginx:
+  server_name: daas.example.com

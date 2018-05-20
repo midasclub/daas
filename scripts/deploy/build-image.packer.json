@@ -24,7 +24,7 @@
 			},
 			"instance_type": "t2.large",
 			"ssh_username": "ubuntu",
-			"ami_name": "midas-{{user `ami_name`}}-{{uuid}}"
+			"ami_name": "daas-{{uuid}}"
 		}
 	],
 	"provisioners": [

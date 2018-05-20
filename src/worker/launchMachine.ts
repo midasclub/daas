@@ -1,9 +1,9 @@
 import { BotStatus, Machine } from "@daas/model"
 import { Bots, getMachinesAdapter } from "@daas/db-adapter"
 import { Communications, MessageType } from "@daas/communications"
-import { getIepaas } from "../api/support/getIepaas"
 import { sendManyTimes } from "./sendManyTimes"
 import { EventHandler } from "./EventHandler"
+import {launchComputeInstance} from "../compute/launchInstance"
 
 export async function launchMachine(): Promise<Machine | null> {
 	console.log("Launching one machine...")
@@ -27,7 +27,7 @@ export async function launchMachine(): Promise<Machine | null> {
 
 	console.log(`Selected bot #${randomBot.id}. Created machine #${machine.id}`)
 
-	await getIepaas().Jobs.create(`npm run core ${machine.id}`)
+	await launchComputeInstance(`daas-core ${machine.id}`)
 	const comms = await Communications.open(machine.id + "")
 
 	await comms.waitForMessage(MessageType.BOOT_OK, 90000)

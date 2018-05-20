@@ -10,7 +10,7 @@ services:
     ports: ["54320:5432"]
     volumes:
       - database:/var/lib/postgresql/data
-  daas:
+  daas-server:
     image: daas
     build:
       context: .
@@ -22,3 +22,13 @@ services:
     env_file: .env
     depends_on:
       - database
+  daas-worker:
+      image: daas
+      build:
+        context: .
+      command: wait-for-it database:5432 -- daas-worker
+      environment:
+        DATABASE_URL: postgres://daas:daas@database:5432/daas
+      env_file: .env
+      depends_on:
+        - database

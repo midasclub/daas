@@ -125,9 +125,14 @@ async function handleLobbiesChanged() {
 
 export async function main() {
 	setNonOverlappingInterval(async () => {
-		await maintainActiveMachines()
-		await wait(5000)
-		await replaceOldMachines()
+		try {
+			await maintainActiveMachines()
+			await wait(5000)
+			await replaceOldMachines()
+		} catch (e) {
+			console.error("An error occurred when managing machines!")
+			console.error(e)
+		}
 	}, 10000 /* TODO make this customizable */)
 	await PubSub.listen("database_changes", () =>
 		handleLobbiesChanged().catch(console.error)

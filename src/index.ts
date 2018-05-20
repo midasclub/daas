@@ -5,19 +5,10 @@ dotenv.config()
 checkEnvVars()
 
 import { closeDb } from "@daas/db-adapter"
-import { oneLine } from "common-tags"
 import { closeServer, launchServer } from "./server"
 import { createFirstApiKeyIfNeeded } from "./createFirstApiKeyIfNeeded"
-import { getIepaas } from "./api/support/getIepaas"
 
 async function main() {
-	try {
-		getIepaas()
-	} catch (e) {
-		console.warn(oneLine`Warning: not running in iepaas. The server won't be able to launch
-		@daas/core in order to launch lobbies.`)
-	}
-
 	await Promise.all([createFirstApiKeyIfNeeded(), launchServer()])
 }
 

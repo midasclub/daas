@@ -26,6 +26,14 @@ fi
 yarn start
 EOF
 
+cat > /usr/local/bin/daas-worker << EOF
+#!/bin/bash
+set -e
+
+cd /app
+yarn worker
+EOF
+
 cat > /usr/local/bin/daas-core << EOF
 #!/bin/bash
 set -e
@@ -35,4 +43,5 @@ yarn core \$@
 EOF
 
 chmod +x /usr/local/bin/daas-server
+chmod +x /usr/local/bin/daas-worker
 chmod +x /usr/local/bin/daas-core

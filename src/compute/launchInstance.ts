@@ -14,7 +14,7 @@ export async function launchComputeInstance(command: string) {
 		oneLine`sudo docker run
 			-e DATABASE_URL="${process.env.DATABASE_URL}"
 			"${process.env.DOCKER_REPO}"
-			"${command}"${logTransmissionCommand}`
+			${command}${logTransmissionCommand}`
 	)
 	await waitForInstanceRunning(id)
 }

@@ -59,8 +59,13 @@ async function sendWebhook(webhook: WebHook, lobby: Lobby, data: any) {
 		})
 
 		console.log(
-			`Sent ${WebHookEventType[webhook.eventType]} webhook to ${webhook.url}`
+			`Sent ${WebHookEventType[webhook.eventType]} webhook to ${webhook.url} with data:`
 		)
+		console.log(JSON.stringify({
+			webhook: webhook.serialize(),
+			lobby: lobby.serialize(),
+			data
+		}, null, 2))
 	} catch (e) {
 		console.error(`Webhook #${webhook.id} (${webhook.url}) failed!`)
 		console.error(e)

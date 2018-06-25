@@ -9,4 +9,3 @@
 [Midas Club](https://www.midasclub.com.br/) to abstract all the Dota related logic into a single,
 isolated and reusable service. DaaS uses [node-dota2](https://github.com/Arcana/node-dota2) under
 the hood to communicate with the Dota game coordinator.
-

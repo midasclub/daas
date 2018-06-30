@@ -10,7 +10,7 @@ app.use("/api/v1", api)
 export const launchServer = () =>
 	new Promise(resolve => {
 		server = app.listen(+process.env.PORT!, () => {
-			console.log(`Server is ready and listening for requests`)
+			console.log(`Server is ready in port: ${process.env.PORT}`)
 			resolve()
 		})
 	})

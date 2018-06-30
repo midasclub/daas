@@ -2,7 +2,7 @@ import { getEC2 } from "./getEC2"
 import { poll } from "./poll"
 import {oneLine} from "common-tags"
 
-export async function launchComputeInstance(command: string) {
+export async function launchComputeInstance(command: string, machineName: string) {
 	const { LOG_TRANSMISSION_ADDRESS, LOG_TRANSMISSION_PORT_CORE } = process.env
 
 	const logTransmissionCommand =
@@ -14,12 +14,13 @@ export async function launchComputeInstance(command: string) {
 		oneLine`sudo docker run
 			-e DATABASE_URL="${process.env.DATABASE_URL}"
 			"${process.env.DOCKER_REPO}"
-			${command}${logTransmissionCommand}`
+			${command}${logTransmissionCommand}`,
+			machineName
 	)
 	await waitForInstanceRunning(id)
 }
 
-export const runInstance = (command: string) =>
+export const runInstance = (command: string, machineName: string) =>
 	new Promise<string>((resolve, reject) =>
 		getEC2().runInstances(
 			{
@@ -33,7 +34,7 @@ export const runInstance = (command: string) =>
 						Tags: [
 							{
 								Key: "Name",
-								Value: "DaaS Machine"
+								Value: `DM - ${machineName}`
 							}
 						]
 					}

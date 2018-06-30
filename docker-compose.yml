@@ -1,34 +1,23 @@
-version: "3"
+version: '3.0'
 
-volumes:
-  database:
 services:
   database:
     image: daas-db
     build:
       context: scripts/containers/database
-    ports: ["54320:5432"]
+    ports:
+      - "54320:5432"
     volumes:
-      - database:/var/lib/postgresql/data
-  daas-server:
+      - ./tmp/postgresql:/var/lib/postgresql/data
+
+  server:
     image: daas
-    build:
-      context: .
-    command: wait-for-it database:5432 -- daas-server
-    ports: ["4000:4000"]
-    environment:
-      DATABASE_URL: postgres://daas:daas@database:5432/daas
-      PORT: 4000
+    command: npm start
+    ports:
+      - "4000:4000"
     env_file: .env
-    depends_on:
-      - database
-  daas-worker:
-      image: daas
-      build:
-        context: .
-      command: wait-for-it database:5432 -- daas-worker
-      environment:
-        DATABASE_URL: postgres://daas:daas@database:5432/daas
-      env_file: .env
-      depends_on:
-        - database
+
+  worker:
+    image: daas
+    command: npm run worker
+    env_file: .env

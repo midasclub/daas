@@ -194,6 +194,9 @@ $RECYCLE.BIN/
 
 key
 scripts/deploy/ci-vars.yml
+tmp
+docker-compose-*.yml
+.idea
 
 # Generated files
 build

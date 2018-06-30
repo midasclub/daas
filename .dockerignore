@@ -1,5 +1,6 @@
 key
 tmp
 docker-compose.yml
-docker-compose-production.yml
+docker-compose-*.yml
+.env*
 .idea

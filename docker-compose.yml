@@ -15,9 +15,30 @@ services:
     command: npm start
     ports:
       - "4000:4000"
-    env_file: .env
+    links:
+      - database
+    environment:
+      DATABASE_URL: postgres://daas:daas@database:5432/daas
+      AWS_ACCESS_KEY_ID: XXXXXXXXXXXXXXX
+      AWS_SECRET_ACCESS_KEY: XXXXXXXXXXXXXXX
+      AWS_REGION: sa-east-1
+      AWS_AMI_ID: ami-xxxxxxxxxxxxxxxxx
+      DOCKER_REPO: my-aws-account-id.dkr.ecr.eu-west-1.amazonaws.com/daas
+      LOG_TRANSMISSION_ADDRESS: 172.0.0.1
+      LOG_TRANSMISSION_PORT_CORE: 6002
+      PORT: 4000
 
   worker:
     image: daas
     command: npm run worker
-    env_file: .env
+    links:
+      - database
+    environment:
+      DATABASE_URL: postgres://daas:daas@database:5432/daas
+      AWS_ACCESS_KEY_ID: XXXXXXXXXXXXXXX
+      AWS_SECRET_ACCESS_KEY: XXXXXXXXXXXXXX
+      AWS_REGION: sa-east-1
+      AWS_AMI_ID: ami-xxxxxxxxxxxxxxxxx
+      DOCKER_REPO: my-aws-account-id.dkr.ecr.eu-west-1.amazonaws.com/daas
+      LOG_TRANSMISSION_ADDRESS: 172.0.0.1
+      LOG_TRANSMISSION_PORT_CORE: 6002

@@ -102,6 +102,7 @@ typings/
 
 # dotenv environment variables file
 .env
+.env.old
 
 
 ### WebStorm ###

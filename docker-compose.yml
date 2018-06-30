@@ -27,6 +27,7 @@ services:
       LOG_TRANSMISSION_ADDRESS: 172.0.0.1
       LOG_TRANSMISSION_PORT_CORE: 6002
       PORT: 4000
+    restart: always
 
   worker:
     image: daas
@@ -42,3 +43,4 @@ services:
       DOCKER_REPO: my-aws-account-id.dkr.ecr.eu-west-1.amazonaws.com/daas
       LOG_TRANSMISSION_ADDRESS: 172.0.0.1
       LOG_TRANSMISSION_PORT_CORE: 6002
+    restart: always

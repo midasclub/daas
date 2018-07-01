@@ -30,7 +30,7 @@ export const updateLobby = createController(async req => {
 		if (lobby.machine && !lobby.machine.isTerminated) {
 			// We already know the match result, so there's no point on keeping
 			// the bot alive.
-			const comms = await Communications.open(lobby.machine.id + "")
+			const comms = await Communications.open(`${lobby.machine.id}`)
 			await comms.sendMessage(MessageType.KILL_YOURSELF)
 			await comms.close()
 		}

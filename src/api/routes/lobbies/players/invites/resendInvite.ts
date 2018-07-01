@@ -19,7 +19,7 @@ export const resendInvite = createController(async req => {
 		return [500]
 	}
 
-	const comms = await Communications.open(lobby.machine.id + "")
+	const comms = await Communications.open(`${lobby.machine.id}`)
 	await comms.sendMessage(MessageType.RESEND_INVITE, {
 		playerSteamId: player.steamId
 	})

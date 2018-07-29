@@ -15,7 +15,7 @@ export class EventHandler {
 	 * @param machine The machine to watch
 	 */
 	public static async watch(machine: Machine) {
-		const comms = await Communications.open(machine.id + "")
+		const comms = await Communications.open(`${machine.id}`)
 
 		console.log(`Started watching machine #${machine.id}`)
 
@@ -100,6 +100,7 @@ export class EventHandler {
 		machine: Machine,
 		matchResult: MatchResult
 	) {
+		console.log('Finish Game: ', JSON.stringify(matchResult, null, 2))
 		await Promise.all([
 			markMachineAsTerminated(machine),
 			disableBot(machine.bot, 3 /*h*/ * 60 /*m*/), // TODO allow to customize

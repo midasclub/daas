@@ -27,7 +27,7 @@ export async function launchMachine(): Promise<Machine | null> {
 
 	console.log(`Selected bot #${randomBot.id}. Created machine #${machine.id}`)
 
-	await launchComputeInstance(`daas-core ${machine.id}`, `${machine.id}`)
+	await launchComputeInstance(`npm run core ${machine.id}`, `${machine.id}`)
 	const comms = await Communications.open(`${machine.id}`)
 
 	await comms.waitForMessage(MessageType.BOOT_OK, 90000)
